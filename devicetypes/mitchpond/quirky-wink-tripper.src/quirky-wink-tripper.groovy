@@ -21,7 +21,7 @@ metadata {
 		capability "Battery"
 		capability "Configuration"
 		capability "Sensor"
-        	capability "Tamper Alert"
+		capability "Tamper Alert"
     
 		command "configure"
 		command "resetTamper"
