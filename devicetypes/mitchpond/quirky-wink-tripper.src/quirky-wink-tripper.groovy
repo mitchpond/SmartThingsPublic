@@ -200,7 +200,7 @@ private parseIasMessage(String description) {
 //ADM - 8-31 Added mapping values for 30 and 29 to map below -since they were valid values - 3 or 2.9  volts were returning null
 
 private getBatteryResult(volts) {
-	def batteryMap = [30:100, 29:100, 28:100, 27:95, 26:75, 25:50, 24:25, 23:20,
+	def batteryMap = [30:100, 29:95, 28:90, 27:80, 26:75, 25:50, 24:25, 23:20,
                           22:10, 21:0]
 	def minVolts = 21
 	def maxVolts = 30
