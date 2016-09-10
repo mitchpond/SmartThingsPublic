@@ -197,14 +197,16 @@ private parseIasMessage(String description) {
 //Converts the battery level response into a percentage to display in ST
 //and creates appropriate message for given level
 
+//ADM - 8-31 Added mapping values for 30 and 29 to map below -since they were valid values - 3 or 2.9  volts were returning null
+
 private getBatteryResult(volts) {
-	def batteryMap = [28:100, 27:100, 26:75, 25:50, 24:25, 23:20,
+	def batteryMap = [30:100, 29:100, 28:100, 27:95, 26:75, 25:50, 24:25, 23:20,
                           22:10, 21:0]
 	def minVolts = 21
 	def maxVolts = 30
 	def linkText = getLinkText(device)
 	def result = [name: 'battery']
-	log.debug("${linkText} reports batery voltage at ${rawValue/10}") //added logging for voltage level to help determine actual min voltage from users
+	log.debug("${linkText} reports battery voltage at ${volts/10}") //added logging for voltage level to help determine actual min voltage from users
     
     if (volts < minVolts) volts = minVolts
     	else if (volts > maxVolts) volts = maxVolts
