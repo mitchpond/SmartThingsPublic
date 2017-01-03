@@ -1,26 +1,17 @@
 /*
-===============================================================================
  *  Copyright 2016 SmartThings
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not
- *  use this file except in compliance with the License. You may obtain a copy 
+ *  use this file except in compliance with the License. You may obtain a copy
  *  of the License at:
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software 
- *  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
- *  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- *  License for the specific language governing permissions and limitations 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ *  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ *  License for the specific language governing permissions and limitations
  *  under the License.
-===============================================================================
- *  Purpose: SmartPower Outlet DTH File
- *
- *  Filename: SmartPower-Outlet.src/SmartPower-Outlet.groovy
- *
- *  Change History:
- *  1. 20160117 TW - Update/Edit to support i18n translations
-===============================================================================
  */
 
 metadata {
@@ -32,6 +23,7 @@ metadata {
 		capability "Configuration"
 		capability "Refresh"
 		capability "Sensor"
+		capability "Health Check"
 
 		// indicates that device keeps track of heartbeat (in state.heartbeat)
 		attribute "heartbeat", "string"
@@ -66,10 +58,10 @@ metadata {
 	tiles(scale: 2) {
 		multiAttributeTile(name:"switch", type: "lighting", width: 6, height: 4, canChangeIcon: true){
 			tileAttribute ("device.switch", key: "PRIMARY_CONTROL") {
-				attributeState "on", label: '${name}', action: "switch.off", icon: "st.switches.switch.on", backgroundColor: "#79b821", nextState: "turningOff"
-				attributeState "off", label: '${name}', action: "switch.on", icon: "st.switches.switch.off", backgroundColor: "#ffffff", nextState: "turningOn"
-				attributeState "turningOn", label: '${name}', action: "switch.off", icon: "st.switches.switch.on", backgroundColor: "#79b821", nextState: "turningOff"
-				attributeState "turningOff", label: '${name}', action: "switch.on", icon: "st.switches.switch.off", backgroundColor: "#ffffff", nextState: "turningOn"
+				attributeState "on", label: 'On', action: "switch.off", icon: "st.switches.switch.on", backgroundColor: "#79b821", nextState: "turningOff"
+				attributeState "off", label: 'Off', action: "switch.on", icon: "st.switches.switch.off", backgroundColor: "#ffffff", nextState: "turningOn"
+				attributeState "turningOn", label: 'Turning On', action: "switch.off", icon: "st.switches.switch.on", backgroundColor: "#79b821", nextState: "turningOff"
+				attributeState "turningOff", label: 'Turning Off', action: "switch.on", icon: "st.switches.switch.off", backgroundColor: "#ffffff", nextState: "turningOn"
 			}
 			tileAttribute ("power", key: "SECONDARY_CONTROL") {
 				attributeState "power", label:'${currentValue} W'
@@ -104,8 +96,8 @@ def parse(String description) {
 			log.info "$device updates: ${finalResult.value}"
 		}
 		else if (finalResult.type == "power") {
-			def value = (finalResult.value as Integer)/10
-			createEvent(name: "power", value: value, descriptionText: '{{ device.displayName }} power is {{ value }} Watts', translatable: true )
+			def powerValue = (finalResult.value as Integer)/10
+			sendEvent(name: "power", value: powerValue, descriptionText: '{{ device.displayName }} power is {{ value }} Watts', translatable: true )
 			/*
 				Dividing by 10 as the Divisor is 10000 and unit is kW for the device. AttrId: 0302 and 0300. Simplifying to 10
 				power level is an integer. The exact power level with correct units needs to be handled in the device type
@@ -113,10 +105,8 @@ def parse(String description) {
 			*/
 		}
 		else {
-        	if ( finalResult.value == "on" )
-				createEvent(name: finalResult.type, value: finalResult.value, descriptionText: '{{ device.displayName }} is On', translatable: true)
-            else
-            	createEvent(name: finalResult.type, value: finalResult.value, descriptionText: '{{ device.displayName }} is Off', translatable: true)
+			def descriptionText = finalResult.value == "on" ? '{{ device.displayName }} is On' : '{{ device.displayName }} is Off'
+			sendEvent(name: finalResult.type, value: finalResult.value, descriptionText: descriptionText, translatable: true)
 		}
 	}
 	else {

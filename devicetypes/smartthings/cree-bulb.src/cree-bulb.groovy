@@ -13,17 +13,19 @@
  *  for the specific language governing permissions and limitations under the License.
  *
  */
- 
+
+//@Deprecated: Moved to ZLL Dimmer Bulb
 metadata {
     definition (name: "Cree Bulb", namespace: "smartthings", author: "SmartThings") {
 
         capability "Actuator"
         capability "Configuration"
+        capability "Polling"
         capability "Refresh"
         capability "Switch"
         capability "Switch Level"
 
-        fingerprint profileId: "C05E", inClusters: "0000,0003,0004,0005,0006,0008,1000", outClusters: "0000,0019"
+        //fingerprint profileId: "C05E", inClusters: "0000,0003,0004,0005,0006,0008,1000", outClusters: "0000,0019"
     }
 
     // simulator metadata
@@ -86,6 +88,10 @@ def setLevel(value) {
 
 def refresh() {
     zigbee.onOffRefresh() + zigbee.levelRefresh() + zigbee.onOffConfig() + zigbee.levelConfig()
+}
+
+def poll() {
+    zigbee.onOffRefresh() + zigbee.levelRefresh()
 }
 
 def configure() {

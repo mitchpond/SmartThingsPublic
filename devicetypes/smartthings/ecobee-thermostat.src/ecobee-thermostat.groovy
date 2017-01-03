@@ -379,12 +379,16 @@ def getDataByName(String name) {
 	state[name] ?: device.getDataValue(name)
 }
 
-def setThermostatMode(String value) {
-	log.debug "setThermostatMode({$value})"
+def setThermostatMode(String mode) {
+	log.debug "setThermostatMode($mode)"
+	mode = mode.toLowerCase()
+	switchToMode(mode)
 }
 
-def setThermostatFanMode(String value) {
-	log.debug "setThermostatFanMode({$value})"
+def setThermostatFanMode(String mode) {
+	log.debug "setThermostatFanMode($mode)"
+	mode = mode.toLowerCase()
+	switchToFanMode(mode)
 }
 
 def generateModeEvent(mode) {
